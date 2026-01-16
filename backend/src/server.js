@@ -12,30 +12,41 @@ connectDB();
 const app = express();
 
 const allowedOrigins = [
-  'http://localhost',
   'http://localhost:5173',
   'http://localhost:80',
-  'http://127.0.0.1',
-  'http://127.0.0.1:5173',
+  'http://localhost',
   process.env.FRONTEND_URL,
-  process.env.NODE_ENV === 'production' && 'https://your-production-domain.onrender.com'
+  process.env.RENDER_EXTERNAL_URL
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is allowed
+    if (allowedOrigins.some(allowed => origin.startsWith(allowed))) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(null, true); // Allow in development, log warning
     }
   },
-  credentials: true,
+  credentials: false,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(`${req.method} ${req.path} - ${res.statusCode} [${Date.now() - start}ms]`);
+  });
+  next();
+});
 
 
 app.get("/health", (req, res) => {

@@ -3,17 +3,17 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
-  baseURL: API_URL || 'http://localhost:5000/api',
+  baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Content-Type': 'application/json'
   },
-  timeout: 240000,
-  withCredentials: true
+  timeout: 30000,
+  withCredentials: false
 });
 
 api.interceptors.request.use(
   (config) => {
+    console.log(`API Request: ${config.method.toUpperCase()} ${config.url}`);
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       if (token) {
@@ -24,19 +24,29 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Request Error:', error);
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
   (response) => {
+    console.log(`API Response: ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status}`);
     return response;
   },
   (error) => {
     const status = error.response?.status;
     const message = error.response?.data?.message || error.message;
     
-    if (status === 401) {
+    console.error('API Error:', {
+      url: error.config?.url,
+      status,
+      message,
+      code: error.code
+    });
+    
+    // Don't redirect on 401 during login/signup
+    if (status === 401 && !error.config?.url?.includes('/auth/')) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -57,11 +67,15 @@ api.interceptors.response.use(
       return Promise.reject(new Error('Server error - Please try again later'));
     }
 
-    if (!error.response) {
-      return Promise.reject(new Error('Network error - Please check your connection'));
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject(new Error('Request timeout - Server took too long to respond'));
     }
 
-    return Promise.reject(error);
+    if (error.code === 'ERR_NETWORK' || !error.response) {
+      return Promise.reject(new Error(`Cannot connect to server at ${API_URL}. Make sure the backend is running and VITE_API_URL is correctly set.`));
+    }
+
+    return Promise.reject(new Error(message));
   }
 );
 
