@@ -30,12 +30,13 @@ export default function ImageGallery({ blog, onUpdate }) {
     setUploading(true);
     try {
       const dataUrl = await readFileAsDataUrl(file);
-      const response = await blogAPI.addImageToBlog(blog.blogId, dataUrl, file.name);
+      const response = await blogAPI.addImageToBlog(blog.blogId, dataUrl);
       if (response?.image) {
         onUpdate({ ...blog, images: [...blog.images, response.image] });
       }
     } catch (err) {
-      alert('Failed to upload image');
+      console.error('Upload error:', err);
+      alert(`Failed to upload image: ${err.response?.data?.message || err.message}`);
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -54,14 +55,11 @@ export default function ImageGallery({ blog, onUpdate }) {
             <div className="relative group">
               <img
                 src={image.url}
-                alt={image.prompt || `Image ${index + 1}`}
+                alt={`Image ${index + 1}`}
                 className="w-full h-64 object-cover"
               />
             </div>
             <div className="p-4 bg-gray-50">
-              <p className="text-sm text-gray-600 mb-3 italic">
-                {image.prompt || 'No prompt'}
-              </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleRemoveImage(index)}

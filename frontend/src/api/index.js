@@ -63,10 +63,9 @@ export const blogAPI = {
     return response.data;
   },
 
-  addImageToBlog: async (blogId, imageUrl, prompt) => {
+  addImageToBlog: async (blogId, imageUrl) => {
     const response = await api.post(`/blog/${blogId}/images`, {
-      imageUrl,
-      prompt
+      imageUrl
     });
     return response.data;
   },

@@ -3,7 +3,7 @@ import { AppError, asyncHandler } from '../utils/errorHandler.js';
 
 export const addImageToBlog = asyncHandler(async (req, res) => {
   const { blogId } = req.params;
-  const { imageUrl, prompt = '' } = req.body;
+  const { imageUrl } = req.body;
 
   if (!blogId) {
     throw new AppError('Blog ID is required', 400);
@@ -13,12 +13,20 @@ export const addImageToBlog = asyncHandler(async (req, res) => {
     throw new AppError('Image URL is required', 400);
   }
 
+  // Validate that it's either a data URL or a regular URL
+  const isDataUrl = imageUrl.startsWith('data:image/');
+  const isHttpUrl = imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+  
+  if (!isDataUrl && !isHttpUrl) {
+    throw new AppError('Invalid image URL format. Must be a data URL or HTTP(S) URL', 400);
+  }
+
   const blog = await Blog.findOne({ _id: blogId, userId: req.userId });
   if (!blog) {
     throw new AppError('Blog not found', 404);
   }
 
-  const image = { url: imageUrl, prompt, source: 'manual' };
+  const image = { url: imageUrl, source: 'manual' };
   blog.images.push(image);
   await blog.save();
 
