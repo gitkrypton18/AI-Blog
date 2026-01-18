@@ -96,21 +96,20 @@ export default function ImageGallery({ blog, onUpdate }) {
       <div className="border-t border-gray-200 pt-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload Image</h3>
         <div className="flex gap-3 items-center">
-          <label className="cursor-pointer">
-            <button
-              disabled={uploading}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {uploading ? 'Uploading...' : 'Upload Image'}
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleUploadImage}
-              className="hidden"
-              disabled={uploading}
-            />
+          <label 
+            htmlFor="image-upload" 
+            className={`cursor-pointer px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 inline-block ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {uploading ? 'Uploading...' : 'Upload Image'}
           </label>
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleUploadImage}
+            className="hidden"
+            disabled={uploading}
+          />
           <p className="text-sm text-gray-600">Select an image file to add it to this blog.</p>
         </div>
       </div>
