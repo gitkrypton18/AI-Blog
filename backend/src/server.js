@@ -38,8 +38,6 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.options('*', cors());
-
 app.use(compression());
 
 app.use(express.json({ limit: "50mb" }));
