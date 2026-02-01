@@ -24,6 +24,10 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.get("/", (req, res) => {
+  res.json({ message: "API is working successfully!" });
+});
+
 app.get("/api/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
