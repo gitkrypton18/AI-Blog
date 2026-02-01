@@ -42,8 +42,6 @@ AI Blog Generator is a modern web application that automates blog content creati
 - **Turndown** - HTML to Markdown conversion
 
 ### DevOps & Tools
-- **Docker & Docker Compose** - Containerization and orchestration
-- **Nginx** - Frontend web server
 - **dotenv** - Environment variable management
 - **ESLint** - Code linting
 
@@ -51,11 +49,9 @@ AI Blog Generator is a modern web application that automates blog content creati
 
 ```
 AI-Blog/
-├── docker-compose.yml          # Docker Compose configuration
 ├── README.md                   # Project documentation
 │
 ├── backend/                    # Backend server
-│   ├── Dockerfile             # Backend Docker configuration
 │   ├── package.json           # Backend dependencies
 │   ├── config/
 │   │   └── db.js             # MongoDB connection
@@ -83,8 +79,6 @@ AI-Blog/
 │           └── validation.js
 │
 └── frontend/                  # Frontend application
-    ├── Dockerfile            # Frontend Docker configuration
-    ├── nginx.conf            # Nginx configuration
     ├── package.json          # Frontend dependencies
     ├── vite.config.js        # Vite configuration
     ├── eslint.config.js      # ESLint configuration
@@ -120,7 +114,6 @@ AI-Blog/
 
 - **Node.js** (v18 or higher)
 - **MongoDB** (local or Atlas)
-- **Docker & Docker Compose** (for containerized deployment)
 - **Hugging Face API Token** (get from [Hugging Face](https://huggingface.co/settings/tokens))
 
 ### Installation
@@ -144,26 +137,6 @@ npm install
 ```bash
 cd ../frontend
 npm install
-```
-
-### 🐳 Running with Docker
-
-#### Build and Start All Services
-
-```bash
-docker-compose up --build
-```
-
-#### Start in Detached Mode
-
-```bash
-docker-compose up -d
-```
-
-#### Stop Services
-
-```bash
-docker-compose down
 ```
 
 ## 👥 Contributors
